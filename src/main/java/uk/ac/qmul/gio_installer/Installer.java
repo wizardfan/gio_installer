@@ -76,11 +76,18 @@ public class Installer {
         }
         File toolConfPath = new File(GALAXY_PATH + "/tool_conf.xml");
         if (!toolConfPath.exists()) {
-            return false;
+            //new version of Galaxy puts every config file under folder config
+            File newToolConfPath = new File(GALAXY_PATH + "/config/tool_conf.xml");
+            if(!newToolConfPath.exists()){
+                return false;
+            }
         }
         File universePath = new File(GALAXY_PATH + "/universe_wsgi.ini");
         if (!universePath.exists()) {
-            return false;
+            File newMainConfPath = new File(GALAXY_PATH + "/config/galaxy.ini");
+            if(!newMainConfPath.exists()){
+                return false;
+            }
         }
         return true;
     }
