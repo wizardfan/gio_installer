@@ -96,7 +96,8 @@ public class Installer {
         System.out.println("Checking out the latest version of gio_repository. This process could take a while, please be patient.");
         File delme = new File(CURRENT_PATH);
         try {
-            Process proc = Runtime.getRuntime().exec("svn checkout https://gio-repository.googlecode.com/svn/trunk/ gio-repository", null, delme);
+//            Process proc = Runtime.getRuntime().exec("svn checkout https://gio-repository.googlecode.com/svn/trunk/ gio-repository", null, delme);
+            Process proc = Runtime.getRuntime().exec("git clone https://github.com/wizardfan/gio-repository", null, delme);
             int value = proc.waitFor();
 //            System.out.println(value);
         } catch (IOException ex) {
