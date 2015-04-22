@@ -154,6 +154,12 @@ public class Installer {
         //gio entries have been extracted from the section xml files
         //then add those gio entries into the tool_conf.xml
         String filepath = GALAXY_PATH + "/tool_conf.xml";
+        File toolConfFile = new File(filepath);
+        if (!toolConfFile.exists()){
+            filepath = GALAXY_PATH + "/config/tool_conf.xml";
+            toolConfFile = new File(filepath);
+        }
+        System.out.println("Modifying the tool configuration file: "+toolConfFile.getAbsolutePath());
         Scanner scanner = null;
         try {
             scanner = new Scanner(new File(filepath));
@@ -244,6 +250,8 @@ public class Installer {
             proc = Runtime.getRuntime().exec("cp -r " + CURRENT_PATH + "/gio-repository/wrappers/ " + GALAXY_PATH + "/tools/gio");
             proc.waitFor();
             proc = Runtime.getRuntime().exec("cp -r " + CURRENT_PATH + "/gio-repository/applications/ " + GALAXY_PATH + "/../gio_applications");
+            proc.waitFor();
+            proc = Runtime.getRuntime().exec("cp " + CURRENT_PATH + "/gio-repository/checkGioExecutable.pl " + GALAXY_PATH + "/../gio_applications");
             proc.waitFor();
         } catch (IOException ex) {
             Logger.getLogger(Installer.class.getName()).log(Level.SEVERE, null, ex);
