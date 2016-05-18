@@ -52,7 +52,7 @@ public class Installer {
     }
 
     private void locateGalaxyFolder() {
-        if (!checkGalaxyFolder()) {
+        if (!checkGalaxyFolder(GALAXY_PATH)) {
             //if galaxy not located at the provided location, try the possible default installation folder
             if (GALAXY_PATH.length() == 0) {
                 System.out.println("No galaxy path has been provided");
@@ -60,34 +60,41 @@ public class Installer {
                 System.out.println("Galaxy has not been found at the provided path " + GALAXY_PATH);
             }
             System.out.println("Now trying to locate Galaxy at the default installation path");
-            GALAXY_PATH = System.getProperties().getProperty("user.home") + "/galaxy-dist/";
-            if (!checkGalaxyFolder()) {
-                System.out.println("Galaxy has not been found at the guessed path " + GALAXY_PATH + " either. Please make sure galaxy has been installed or the correct path has been supplied to the installer");
-                System.exit(1);
+            String oldDefault = System.getProperties().getProperty("user.home") + "/galaxy-dist/";
+            String newDefault = System.getProperties().getProperty("user.home") + "/galaxy/";
+            if(checkGalaxyFolder(oldDefault)){
+                GALAXY_PATH = oldDefault;
+            }else{
+                if(checkGalaxyFolder(newDefault)){
+                    GALAXY_PATH = newDefault;
+                }else{
+                    System.out.println("Galaxy has not been found at the guessed path " + oldDefault + " and " + newDefault + " either. Please make sure galaxy has been installed or the correct path has been supplied to the installer");
+                    System.exit(1);
+                }
             }
         }
         System.out.println("Galaxy folder has been located");
     }
 
-    private boolean checkGalaxyFolder() {
-        File galaxy = new File(GALAXY_PATH);
+    private boolean checkGalaxyFolder(String galaxyBase) {
+        System.out.println("Checking the folder:"+galaxyBase);
+        File galaxy = new File(galaxyBase);
         if (!galaxy.exists()) {
             return false;
         }
-        File toolConfPath = new File(GALAXY_PATH + "/tool_conf.xml");
-        if (!toolConfPath.exists()) {
-            //new version of Galaxy puts every config file under folder config
-            File newToolConfPath = new File(GALAXY_PATH + "/config/tool_conf.xml");
-            if(!newToolConfPath.exists()){
-                return false;
-            }
+        System.out.println("The folder exists");
+        File toolConfOldPath = new File(galaxyBase + "/tool_conf.xml");
+        File toolConfNewPath = new File(galaxyBase + "/config/tool_conf.xml");
+        if (!toolConfOldPath.exists() && !toolConfNewPath.exists()) {
+            return false;
         }
-        File universePath = new File(GALAXY_PATH + "/universe_wsgi.ini");
-        if (!universePath.exists()) {
-            File newMainConfPath = new File(GALAXY_PATH + "/config/galaxy.ini");
-            if(!newMainConfPath.exists()){
-                return false;
-            }
+        System.out.println("Located tool_conf.xml");
+        File universePath = new File(galaxyBase + "/universe_wsgi.ini");
+        File galaxyIniPath = new File(galaxyBase + "/config/galaxy.ini");
+        System.out.println("Exists universe_wsgi.ini:"+universePath.exists());
+        System.out.println("Exists galaxy.ini:"+galaxyIniPath.exists());
+        if (!universePath.exists() && !galaxyIniPath.exists()) {
+            return false;
         }
         return true;
     }
